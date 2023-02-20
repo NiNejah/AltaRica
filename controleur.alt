@@ -1,0 +1,49 @@
+
+Const nbSensors = 4 ; 
+node Vanne 
+    state 
+        debit : [0,2] :public ;
+        panne : bool :public ;
+    init debit := 0 , panne := false ;
+    event 
+        inc : public;
+        dec : public;
+    trans 
+        ~panne |- inc -> debit := debit + 1 ;
+        ~panne |- dec -> debit := debit - 1 ;
+        ~panne |- inc ->  panne := true;
+        ~panne |- dec ->  panne := true;
+        panne |- dec -> ; 
+        panne |- inc -> ; 
+        debit = 0 |- dec -> ;
+        debit = 2 |- inc -> ;
+edon
+
+
+node Cuve
+    state level : [0,nbSensors];
+    init level := 2 ; 
+    flow 
+        amont :[0,4] :public ; 
+        aval: [0,2] :public ;
+    event 
+        time ;
+    trans 
+        amont > aval | ( amont = aval & amont > 0)  |- time -> level:=level +1 ;
+        amont < aval | ( amont = aval & amont > 0) |- time -> level:= level -1 ;
+        (amont = aval & aval = 0) | 
+        ( amont = aval & amont > 0) | 
+        (level=4 &(amont >aval)) | 
+        (level=0 &(amont <aval))  |- time -> ;
+        
+edon
+
+node Controleur
+    sub 
+        C : Cuve ;
+        Amonts : Vanne[2];
+        Aval : Vanne ;
+    assert 
+        C.amont = (Amonts[0].debit + Amonts[1].debit);
+        C.aval  = Aval.debit ;
+edon 
