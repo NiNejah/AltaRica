@@ -2,10 +2,11 @@ sujet/Alt
 sujet/Controleurs
 sujet/ControleursOpt
 sujet/Graphs
-sujet/LaTex
+sujet/LaTex*
 sujet/Res
 sujet/Spec
 sujet/*.tgz
 sujet/*.aux
 sujet/*.fdb_latexmk
 sujet/*.time
+sujet/GNUmakefile
